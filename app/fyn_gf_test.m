@@ -1,121 +1,53 @@
-function fyn_gf_test
-% fyn signal under growth factor stimulation
+% fyn signal under growth factor stimulation 
 % Shaoying Lu Shirley Wu Mingxing Ouyang Yingxiao Wang
+% Chris Blackburn
 % Copyright (2015) The Regents of the University of California
 % All Rights Reserved
-%
 
-% Parameters
-% ----- Signaling model parameters -------
-% a_1d = p(1);
-% fyn_total = p(2); % Total Fyn concentration = active + inactive Fyn = constant. 
-% b_1p = p(3);
-% ptp = p(4); % Phosphatase concentration = constant
-% a_2g = p(5);
-% % Growth factor concentration is a step function of t
-% if t<0,
-%     gf = 0;
-% elseif t>=0,
-%     gf = p(6);
-% end;
-% b_2d = p(7); % Dis-association rate
-% b_3d = p(8);
+function [t, fyn_act] = fyn_gf_test(varargin)
+parameter_name = {'model', 'fyn_act_exp', 'test_basal_level','gf_1', 'show_figure'};
+default_value = {'egfr_huang', [], 0, [],1};
+[model, fyn_act_exp, test_basal_level, gf_1, show_figure] = ...
+    parse_parameter(parameter_name, default_value, varargin);
 
-% % EGF/EGFR parameters 
-% % Assume that the biosensor readout is Fyn activity
-% % Assume that all the growth factors are active in dimers and inactive in
-% % monomer; and that only active growth factor dimers can be internalized. 
-% fyn_total = 0.5; % [uM]
-% p(1) = 1;       % a_1d        [1/(uM Sec)] activation rate of Fyn by DGFR
-% p(2) = fyn_total;     
-% p(3) = 2;       % b_1p        [1/(uM Sec)] de-activation rate of active Fyn by Phosphatase 
-% p(4) = 0.2;     % PTP         [uM]
-% p(5) = 1;       % a_2g        [1/(uM Sec)] activation rate of the growth factor reccpetor by GF
-% p(6) = 0.1; % 1.0;     % gf at basal level         [uM]
-% p(7) = 0.1;%0.001;       % gf added at time 0         [uM] --- ask Mingxing
-% p(8) = 1;    % b_2d        [1/sec] dis-association rate of the growth factor dimers
-% p(9) = 0.001; % b_3d        [1/sec] internalization rate of the growth factor dimers
-% % Initial conditions 
-% fyn_0  = 0.0102;       % [uM]
-% dgfr_0 = 0.0083;       % [uM]
-% gfr_total_0 = 0.0998;     % [uM]    concentration of growth factor receptors 
-% y0     = [fyn_0;dgfr_0;gfr_total_0];    
+% Initialize parameters
+data = init_data(model);
+if test_basal_level,
+    data.gf_1 = 0;
+    y0 = [0; 0; 0; data.base_gfr_total_0];
+else
+    y0 = [data.fyn_act_0
+        data.gf_gfr_0
+        data.dgf_gfr_0
+        data.gfr_total_0];
+end;
 
-% PDGF/PDGFR parameters 
-% Assume that the biosensor readout is Fyn activity
-% Assume that all the growth factors are active in dimers and inactive in
-% monomer; and that only active growth factor dimers can be internalized. 
-fyn_total = 0.5; % [uM]
-p(1) = 1;       % a_1d        [1/(uM Sec)] activation rate of Fyn by DGFR
-p(2) = fyn_total;     
-p(3) = 2;       % b_1p        [1/(uM Sec)] de-activation rate of active Fyn by Phosphatase 
-p(4) = 0.2;     % PTP         [uM]
-p(5) = 1;       % a_2g        [1/(uM Sec)] activation rate of the growth factor reccpetor by GF
-p(6) = 0.1; % 1.0;     % gf at basal level         [uM]
-p(7) = 0.1;       % gf added at time 0         [uM] --- ask Mingxing
-p(8) = 0.1;     % b_2d        [1/sec] dis-association rate of the growth factor dimers
-p(9) = 0.001; %0.00001; % b_3d        [1/sec] internalization rate of the growth factor dimers
-% Initial conditions 
-fyn_0  = 0.01195;       % [uM]
-dgfr_0 = 0.0098;       % [uM]
-gfr_total_0 = 0.0294;     % [uM]    concentration of growth factor receptors
-y0     = [fyn_0;dgfr_0;gfr_total_0];    
-
-
-% Options
-tspan = [-300;3000];
-options = odeset('RelTol',1e-5,'MaxStep',1.0,'Stats','on'); 
+if ~isempty(gf_1),
+    data.gf_1 = gf_1;
+end;
 
 % Run simulation
-[t,y] = ode15s(@f,tspan,y0,options,p);
-
+tspan = [-300;3000];
+options = odeset('RelTol',1e-5,'MaxStep',1.0,'Stats','on'); 
+[t,y] = ode15s(@rhs,tspan,y0,options,data);
 yfinal = y(end,:)
 
-fyn = y(:,1);
-dgfr = y(:,2);
-gfr_total = y(:,3);
+fyn_act = y(:,1);
+gf_gfr = y(:,2);
+dgf_gfr = y(:,3);
+gfr_total = y(:,4);
 
-figure; plot(t, fyn); title('[FYN]'); xlabel('Time (sec)');
-figure; plot(t, dgfr); title('[DGFR]'); xlabel('Time (sec)');
-figure; plot(t, gfr_total); title('[GFR_Total]'); xlabel('Time (sec)');
-
+% Plot results
+if show_figure,
+    figure; plot(t, fyn_act); title('[FYN ACT]'); xlabel('Time (sec)');
+    figure; plot(t/60, fyn_act*10+0.14); title('[FYN ACT]'); xlabel('Time (min)');
+    if ~isempty(fyn_act_exp),
+        hold on; plot(fyn_act_exp(:,1)-5, fyn_act_exp(:,2),'ro');
+    end;
+    figure; plot(t, gf_gfr); title('[GF GFR]'); xlabel('Time (sec)');
+    figure; plot(t, dgf_gfr); title('[DGF GFR]'); xlabel('Time (sec)');
+    figure; plot(t, gfr_total); title('[GFR Total]'); xlabel('Time (sec)');
+end
 return;
 
-% Right hand side function
-function ydot = f(t, y, p)
-% Initiliaze variables
-fyn = y(1); % fyn kinase activity
-% dgfr - concentration of dimer growth factor receptors, assuming they are active
-%        and ligand bound
-dgfr = y(2); 
-gfr_total = y(3); % Concentration of all growth factors
-% Parameters
-a_1d = p(1);
-fyn_total = p(2); % Total Fyn concentration = active + inactive Fyn = constant. 
-b_1p = p(3);
-ptp = p(4); % Phosphatase concentration = constant
-a_2g = p(5);
-% Growth factor concentration is a step function of t
-if t<0,
-    gf = p(6);
-elseif t>=0,
-    gf = p(6)+p(7);
-end;
-b_2d = p(8); % Dissociation rate
-b_3d = p(9);
-
-% Equations
-fyn_dot = a_1d*dgfr*(fyn_total-fyn)-b_1p*ptp*fyn;
-% mgfr - concentration of monomer growth factors 
-mgfr = gfr_total-2*dgfr;
-dgfr_dot = a_2g*gf* mgfr - b_2d*dgfr;
-gfr_total_dot = -b_3d*dgfr;
-
-% dy/dt
-ydot = zeros(size(y));
-ydot(1) = fyn_dot;
-ydot(2) = dgfr_dot;
-ydot(3) = gfr_total_dot;
-
-return;
 

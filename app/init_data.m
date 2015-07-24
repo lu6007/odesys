@@ -13,7 +13,7 @@ switch(model),
         % Huang et al. 2011 PLOS ONE. 
         % Simulating EGFR-ERK paper parameters
         % Concentration Parameters
-        data.fyn_total = 0.5;       % [nM]
+        data.fyn_total = 1;       % [nM]
         data.ptp = 0.2;             % [nM]
         data.gf_0 = 0.0166;         % [nM] gf at basal level 
         data.gf_1 = 8.065;            % [nM] gf added at time 0 -> 50 ng/ml
@@ -21,7 +21,7 @@ switch(model),
         % Reaction Parameters
         data.k_catf = 1;            % [1/(nM Sec)] activation rate of Fyn by DGFR
         data.k_catb = 2;            % [1/(nM Sec)] de-activation rate of active Fyn by Phosphatase 
-        data.k_gff = 0.1;           % [1/(nM Sec)] association rate between gf and gfr
+        data.k_gff = 0.01;           % [1/(nM Sec)] association rate between gf and gfr
         data.k_gfb = 0.0038;        % [1/sec] dis-association rate of gf_gfr
         data.k_dgf = 0.01;          % [1/(nM sec)] association rate of the growth factor dimers
         data.k_dgb = 0.02;          % [1/sec] dis-association rate of the growth factor dimers
