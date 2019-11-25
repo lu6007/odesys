@@ -1,5 +1,7 @@
 % function fh = opt_utility()
 %     % Useful functions for optimizatoin
+%     fh.constraint = @constraint;
+%     fh.initial_guess = @initial_guess; 
 %     fh.get_exp_data = @get_exp_data;
 %     fh.reconcile_exp_ode = @reconcile_exp_ode;
 %     fh.plot_curve = @plot_curve; 
@@ -7,7 +9,9 @@
 %     fh.output = @output; 
 %     % General functions
 %     fh.get_subcell = @get_subcell; 
+%     fh.normalize_l2norm_square_difference = @normalize_l2norm_square_difference; 
 %     fh.l2norm_square = @l2norm_square;
+%     fh.get_latex = @get_latex; 
 %
 % Example: 
 %    global optimize_ode_utility_fh;
@@ -20,6 +24,8 @@
 
 function fh = opt_utility()
     % Useful functions for optimizatoin
+    fh.constraint = @constraint;
+    fh.initial_guess = @initial_guess; 
     fh.get_exp_data = @get_exp_data;
     fh.reconcile_exp_ode = @reconcile_exp_ode;
     fh.plot_curve = @plot_curve; 
@@ -27,8 +33,29 @@ function fh = opt_utility()
     fh.output = @output; 
     % General functions
     fh.get_subcell = @get_subcell; 
+    fh.normalize_l2norm_square_difference = @normalize_l2norm_square_difference; 
     fh.l2norm_square = @l2norm_square;
     fh.get_latex = @get_latex; 
+end
+
+% Constraint function for the simple ode model
+function problem = constraint(problem, theta_var, theta_upper_bound) 
+% theta_upper_bound is used in eval()
+
+    % problem.Constraints.thetai_high = (theta_var(i)<= theta_high(i)); 
+    % theta(i) <= theta_high(i)
+    num_theta = size(theta_var, 1);
+    for i = 1:num_theta
+        cmd1 = sprintf('problem.Constraints.theta%d_high = ', i);
+        cmd2 = sprintf('(theta_var(%d) <= theta_upper_bound(%d));', i, i);
+        eval([cmd1 cmd2]); 
+    end
+end
+
+% Constraint initial guess function for the simple ode model
+function theta = initial_guess(x, theta_upper_bound)
+    theta = x.* theta_upper_bound;
+    % theta = [0; 0; 0; 400] + x.*[0.1; 0.1; 0.1; 100];
 end
 
 % function [t, y] = get_exp_data(exp_name, varargin)
@@ -130,6 +157,26 @@ function output = get_subcell(input, index)
         for i = 1:num_cell
             output{i} = input{index(i)};
         end
+    end
+end
+
+% The l2 norm squared of (y2-y1) normalized by the squared l2 norm of y1
+% Also normalized by the number of groups if multiple groups if the input
+% contains multiple groups of data in cell form. 
+function diff = normalize_l2norm_square_difference(t, y1, y2)
+    diff = 0; 
+    if ~iscell(t)
+        temp = sqrt(l2norm_square(t, y1)); 
+        diff = l2norm_square(t, (y2 - y1)/temp); clear temp;
+    else % iscell(t) 
+        num_exp = length(t); 
+        for i = 1:num_exp
+            t_i = t{i}; 
+            y_i = y1{i};
+            temp = sqrt(l2norm_square(t_i, y_i)); 
+            diff = diff + l2norm_square(t_i, (y2{i} - y_i)/temp); clear temp;
+        end
+        diff = diff/num_exp; 
     end
 end
 

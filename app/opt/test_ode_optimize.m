@@ -13,7 +13,7 @@
 
 %% Optimize for the a simple model  
 model_name = 'simple_ode'; % 'complex_ode_nodeg'; % 'simple_ode'
-[sol0, sol] = optimize_solve('num_guess', 1, 'model_name', model_name); 
+[sol0, sol] = optimize_solve('num_guess', 0, 'model_name', model_name); 
 
 %% Optimize the complex mode with degradation
 num_guess = 0; % 0 - draw the best fit solution; N - optimize for N initial guesses
@@ -35,24 +35,25 @@ end
 % Copy temp from MABLAB variables to excel
 
 %% Run the best fit complex-nodeg model with fyn_act ednocytosis
-model = fyn_gf_model_nodeg('complex_ode_nodeg', 'best_fit', 1, 'fyn_endo', 1);
+model = complex_ode_nodeg('complex_ode_nodeg', 'best_fit', 1, 'fyn_endo', 1);
 batch_fyn_gf(model.data, 'rhs_function', model.rhs, 'y0', model.data.y0, ...
 'output_function', model.output);
 
 %% Optmize the complex model with no degradation and endocytosis of Fyn kinase
-num_guess = 1;
+num_guess = 0;
 model_name = 'complex_ode_nodeg_endo1'; % fyn_endo
 [sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name); 
 title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
 
 %% Optmize the complex model with no degradation and endocytosis of Fyn kinase
-num_guess = 1;
+num_guess = 0;
 model_name = 'complex_ode_nodeg_endo2'; % fyn_endo
 [sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name); 
 title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
 
 %% Optmize the complex model with no degradation and endocytosis of Fyn kinase
-num_guess = 3;
+% fit concentration dependence
+num_guess = 0;
 model_name = 'complex_ode_nodeg_endo3'; % fyn_endo
 [sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name); 
 title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
@@ -85,3 +86,13 @@ for i = 1: num_guess
     temp(i,:) = [sol0{i}.theta' sol0{i}.error sol{i}.theta' sol{i}.error];
 end
 % Copy temp from MABLAB variables to excel
+
+%% Optmize ode_model_1118.m
+num_guess = 5;
+model_name = 'model_1118'; % fyn_endo
+[sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name); 
+title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
+
+% %% Opt model 1118 
+% model_name = 'opt_model_1118';
+% [sol0, sol] = optimize

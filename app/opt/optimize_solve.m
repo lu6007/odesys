@@ -61,19 +61,28 @@ switch model_name
         xy_axis = [-200 2000 0 200];
         model = fyn_gf_model_nodeg(model_name, 'best_fit', best_fit, ...
             'verbose', verbose, 'fyn_endo', fyn_endo);
+        
+    case 'model_1118'
+        xy_axis = [-200 2000 0 30];
+        multiple_output = 0;
+        best_fit = 0;
+        model = opt_model_1118(model_name, 'multiple_output', multiple_output, ...
+            'best_fit', best_fit);
+%         model.ode = ode_model_1118(model_name, 'multiple_output', multiple_output, ...
+%             'best_fit', best_fit);      
 end
 disp('Function optimize_solve():');
 disp(model); 
-disp(model.data);
-disp(model.opt);
+disp(model.ode.data);
+% disp(model.opt);
 
-data = model.data; 
-objective_fun = model.opt.objective; 
-get_constraint_fun = model.opt.constraint; 
-constraint_initial_guess_fun = model.opt.initial_guess; 
+data = model.ode.data; 
+objective_fun = model.objective; 
+get_constraint_fun = model.constraint; 
+constraint_initial_guess_fun = model.initial_guess; 
 
 % Initial guess of theta
-theta_name = model.opt.theta_name;
+theta_name = model.theta_name;
 num_theta = size(theta_name, 1);
 theta = zeros(num_theta, 1);
 for i = 1:num_theta
@@ -85,7 +94,7 @@ theta_var = optimvar('theta', num_theta, 'LowerBound', 0.0);
 object_express = fcn2optimexpr(objective_fun, theta_var); % expression
 % show(theta_var); show(object_express); 
 problem = optimproblem('Objective', object_express); % problem.Objective = object_express; 
-problem = get_constraint_fun(problem, theta_var, model.opt.theta_upper_bound);
+problem = get_constraint_fun(problem, theta_var, model.theta_upper_bound);
 
 % Latin hypercube sample
 time_start = tic; 
@@ -108,7 +117,7 @@ sol = cell(num_guess, 1);
 for i = 1:num_guess
     if use_latin_hypercube_sample
         theta = constraint_initial_guess_fun(X(i, :)', ...
-            model.opt.theta_upper_bound);
+            model.theta_upper_bound);
     end
  
     % Initial guess of the variables
