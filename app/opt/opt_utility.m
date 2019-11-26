@@ -29,7 +29,8 @@ function fh = opt_utility()
     fh.get_exp_data = @get_exp_data;
     fh.reconcile_exp_ode = @reconcile_exp_ode;
     fh.plot_curve = @plot_curve; 
-    % ODE functions
+    fh.set_model_theta = @set_model_theta; 
+    fh.get_theta_upper_bound = @get_theta_upper_bound; 
     fh.output = @output; 
     % General functions
     fh.get_subcell = @get_subcell; 
@@ -142,6 +143,39 @@ function plot_curve(sol0, sol, varargin)
             end
         end
     end  
+end
+
+% function model = set_model_theta(model, theta_name, theta)
+% copy parameter values from theta to ode.data.theta_name and
+% opt_model.scale
+function model = set_model_theta(model, theta_name, theta)
+    data = model.ode.data; 
+    for i = 1:length(theta_name)
+        switch theta_name{i}
+            case 'scale'
+                model.scale = theta(i);
+            otherwise
+                data.(theta_name{i}) = theta(i);
+        end
+    end
+    model.ode.data = data; 
+end
+
+function theta_ub = get_theta_upper_bound(model, theta_name)
+    factor = 10; 
+    data = model.ode.data; 
+    num_theta = length(theta_name);
+    theta_ub = zeros(num_theta, 1); 
+    for i = 1:length(theta_name)
+        switch theta_name{i}
+            case 'scale'
+                theta_ub(i) = model.scale * factor;
+            otherwise
+                theta_ub(i) = data.(theta_name{i}) * factor;
+        end
+    end
+    model.ode.data = data; 
+
 end
 
 % function output = get_subcell(input, index)

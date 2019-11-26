@@ -63,7 +63,7 @@ function data = init_data(data) % egfr2
             data.koff_7 = 7.895453269;
             data.kcatoff_8 = 0.07948579;
             data.kdoff_8 = 206.2281065;
-            data.scale = 597.507106591057; % Smallest error fitting scale
+            % data.scale = 597.507106591057; % Smallest error fitting scale
         
         case 11 % best fit from fyn_endo = 11
             data.kon_2 = 0.040558595;
@@ -74,7 +74,7 @@ function data = init_data(data) % egfr2
             data.kcatoff_8 = 0.697117467;
             data.kdoff_8 = 340.8719999;
             % data.scale = 548.4923813; % best fit scale
-            data.scale = 133; % PDGF max 1.5 --> 100% of sensor = 200 nM 
+            % data.scale = 133; % PDGF max 1.5 --> 100% of sensor = 200 nM 
     end
     
 end

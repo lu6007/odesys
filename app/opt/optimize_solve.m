@@ -25,7 +25,8 @@ switch model_name
         
     case 'complex_ode' 
         % best_fit only makes a difference if num_guess = 0
-        model = fyn_gf_model(model_name, 'best_fit', 1, 'verbose', verbose);
+        model = fyn_gf_model(model_name, 'multiple_output', 0, ...
+        'best_fit', 1, 'fyn_endo', 0, 'verbose', 1);     
         xy_axis = [-200 2000 0 200];
         
     case 'complex_ode_nodeg'
@@ -68,8 +69,6 @@ switch model_name
         best_fit = 0;
         model = opt_model_1118(model_name, 'multiple_output', multiple_output, ...
             'best_fit', best_fit);
-%         model.ode = ode_model_1118(model_name, 'multiple_output', multiple_output, ...
-%             'best_fit', best_fit);      
 end
 disp('Function optimize_solve():');
 disp(model); 
@@ -90,7 +89,7 @@ for i = 1:num_theta
 end
 
 % Set up the optimization problem
-theta_var = optimvar('theta', num_theta, 'LowerBound', 0.0);
+theta_var = optimvar('theta', num_theta, 'LowerBound', 0.0); 
 object_express = fcn2optimexpr(objective_fun, theta_var); % expression
 % show(theta_var); show(object_express); 
 problem = optimproblem('Objective', object_express); % problem.Objective = object_express; 

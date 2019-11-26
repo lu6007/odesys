@@ -72,10 +72,6 @@ model_name = ['complex_ode_nodeg_endo', endo_str]; % fyn_endo
 [sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name); 
 title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
 
-% %% Opt model 1118 
-% model_name = 'opt_model_1118';
-% [sol0, sol] = optimize
-
 %% Copy the results to temp
 if ~num_guess
     num_guess = 1;
@@ -88,11 +84,7 @@ end
 % Copy temp from MABLAB variables to excel
 
 %% Optmize ode_model_1118.m
-num_guess = 5;
-model_name = 'model_1118'; % fyn_endo
+num_guess = 10;
+model_name = 'model_1118'; % fy n_endo
 [sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name); 
 title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
-
-% %% Opt model 1118 
-% model_name = 'opt_model_1118';
-% [sol0, sol] = optimize

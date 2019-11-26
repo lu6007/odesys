@@ -65,31 +65,30 @@ function data = init_data_original(data) % complex ode with single output
 
     % Reaction Parameters
     data.kon_1 = 0.4509;        % (nM s)^(-1) [Iwamoto et al. 2016 PCB] -> EGF-EGFR
-    data.koff_1 = 0.4509;       %   % s^(-1) kd = 1 nM [Freed 2017 Cell], kd = 175 nM [Dawson JP et al 2005] 
+    data.koff_1 = 0.4509*10;       %   % s^(-1) kd = 1 nM [Freed 2017 Cell], kd = 175 nM [Dawson JP et al 2005] 
     data.kon_2 = 9.917e-4;      % (nM s)^-1 [Dawson et al 2005; Coban et al. 2015] 
     data.koff_2 = 1.19;         % s^-1 [Coban et al. 2015 Biophys J]
     data.kon_3 = 0.125;         % s^-1 [Kim Y et al. 2012 Biochmistry]
     data.kcatoff_3 = 23.43;     % (nM s)^-1 [Shin et al. 2018 PCB; Iwamoto et al. 2016 PCB]
     data.kdoff_3 = 3.802;       % nM [Shin et al. 2018 PCB; Iwamoto et al. 2016 PCB]
     %%%
-    data.kon_4 = 0.01*10;       % s^(-1), to be fitted  
+    data.kon_4 = 0.02/100;       % s^(-1), to be fitted  
     data.koff_4 = 0.02;         % s^(-1) [Iwamoto et al. 2016 PCB]
-    data.kon_5 = 0.03/10;       % s^(-1) [Iwamoto et al. 2016 PCB]
+    data.kon_5 = 0.03;       % s^(-1) [Iwamoto et al. 2016 PCB]
+    %%%  6: Negative regulation and concentration dependence
+    data.kcaton_6 = 1.16e-3*5;     % (nM s)^(-1) [Shin et al. 2018 PCB]
+    data.kdon_6 = 46.45;          % nM [Shin et al. 2018 PCB]
+%     data.kcaton_6 = 1.16e-3;    % (nM s)^(-1) [Shin et al. 2018 PCB]
+%     data.kdon_6 = 46.45;        % nM [Shin et al. 2018 PCB]
     %%% 
-    data.kcaton_6 = 1.16e-3*100;     % (nM s)^(-1) [Shin et al. 2018 PCB]
-    data.kdon_6 = 46.45/10;          % nM [Shin et al. 2018 PCB]
-%     data.kcaton_6 = 1.16e-3; 
-%     data.kdon_6 = 46.45; 
     data.vmaxoff_6 = 6.62e-5;    % s^(-1) [Shin et al. 2018 PCB]
     data.kmoff_6 = 52.72;        % nM [Shin et al. 2018 PCB]
     %
-    data.kon_7 = 0.04*5;
+    data.kon_7 = 0.04;       % Ref? 
     data.koff_7 = 0.9356; 
-    % data.kcaton_8 = 0.02;
-    data.kcaton_8 = 0.02*2; 
-    %%%
+    data.kcaton_8 = 0.02; 
     data.kdon_8 = 23.39;
-    data.kcatoff_8 = 0.1; % 0.1;
+    data.kcatoff_8 = 0.1; 
     data.kdoff_8 = 23.39; 
     
     % Parameters below are needed if run with test_basal_level = 0
@@ -99,7 +98,7 @@ function data = init_data_original(data) % complex ode with single output
     data.gfr_total = data.base_gfr_total_0; 
     
     % Initial values of y at t = 0
-    data.y0 = zeros(9, 1); 
+    data.y0 = zeros(10, 1); 
     
     % Output species
     data.species_name = {'GF-GFR', 'DGFR-GFR', 'DGFR-GFRp', 'ENDO','DEG',...
@@ -119,6 +118,7 @@ function ydot = rhs(t, y, data)
     fyn_act = y(7);
     sensor_act = y(8);
     fyn_endo = y(9); 
+    fyn_deg = y(10); 
 
     % Concentration Parameters
     if t <0
@@ -133,7 +133,7 @@ function ydot = rhs(t, y, data)
     sensor_total = data.sensor_total;
 
     gfr=gfr_total-gfgfr-2*(dgfgfr+dgfgfrp+endo+deg);
-    fyn=fyn_total-fyn_act-fyn_endo; % assume no fyn degradation
+    fyn=fyn_total-fyn_act-fyn_endo-fyn_deg; 
     ptp=ptp_total-ptp_act;
     sensor=sensor_total-sensor_act;
 
@@ -167,7 +167,8 @@ function ydot = rhs(t, y, data)
     v7=kon7*dgfgfrp*fyn-koff7*fyn_act;
     % v8=kcaton8*(fyn_act)*sensor/(kdon8+sensor)-vmaxoff6*fyn_act/(kmoff6+fyn_act);
     v8=kcaton8*(fyn_act)*sensor/(kdon8+sensor)-kcatoff8*ptp_act*sensor_act/(kdoff8+sensor_act);
-    v9 = kon4 * fyn_act;  
+    v9 = kon4 * fyn_act - koff4 * fyn_endo; 
+    v10 = kon5 * fyn_endo; % fyn_endo deg
 
     % dy/dt
     ydot = zeros(size(y));
@@ -179,7 +180,8 @@ function ydot = rhs(t, y, data)
     ydot(6)=v6;         % PTP
     ydot(7)=v7-v9;      % fyn_act
     ydot(8)=v8;         % sensor_act
-    ydot(9) = v9;       % fyn_endo
+    ydot(9) = v9-v10;   % fyn_endo
+    ydot(10) = v10;     % fyn_deg
     
 end
 

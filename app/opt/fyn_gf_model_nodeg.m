@@ -28,6 +28,14 @@ function model_obj = fyn_gf_model_nodeg(model_name, varargin)
     model_obj.ode = ode; 
     
     % Optimization parameters
+    switch best_fit % best_fit = fyn_endo
+        case {2, 3}
+            model_obj.scale = 597.507106591057; % Smallest error fitting scale
+        case 11
+            model_obj.scale = 133; % PDGF max 1.5 --> 100% of sensor = 200 nM
+    end
+            
+    
     switch fyn_endo
         case 0 
             model_obj.objective = @objective;

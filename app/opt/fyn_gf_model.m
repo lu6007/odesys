@@ -23,7 +23,14 @@ function model_obj = fyn_gf_model(model_name, varargin)
     ode = complex_ode(model_name, 'multiple_output', multiple_output, ...
         'best_fit', best_fit, 'fyn_endo', fyn_endo, 'verbose', 0);     
     model_obj.ode = ode; 
-    model_obj.scale = 496.5810; 
+    switch fyn_endo
+        case 0 
+            model_obj.scale = 496.5810; 
+        case {1, 2, 3, 4, 5}
+            model_obj.scale = 593.2; % 194.2/0.3274
+        case {11, 12, 13, 14, 15}
+            model_obj.scale = 262.4007; % Initial guess, 85.91/0.3274
+    end
     
     % Optimization functions and parameters
     model_obj.objective = @objective;

@@ -18,8 +18,9 @@ fyn_gf_ode_solve(data);
 [t, output] = batch_fyn_gf(data);
 %
 data = fyn_gf_init_data('exp_hela_egf');
-data.scale = 1;
+data.scale = 57.1429; % opt_model_1118
 batch_fyn_gf(data);
+axis([-5 35 -5 25]); 
 
 %% Run simulation of a complex model
 name = 'complex_ode'; 
@@ -98,3 +99,4 @@ ode = ode_single_output;
 batch_fyn_gf(ode.data, 'multiple_output', 0, 'best_fit', 0, 'verbose', 1, ...
     'rhs_function', ode.rhs, 'y0', ode.data.y0, ...
 'output_function', ode.output);
+% axis([-5 35 -5 25]); 

@@ -60,7 +60,7 @@ function data = init_data(data)
             data.kon_7 = 0.04;          % Huang et al 2011 Plos one
             data.koff_7 = 0.9356;       % Huang et al 2011 Plos one
             data.y0 = zeros(9,1);
-            data.scale = 593.2; % 194.2/0.3274
+            % data.scale = 593.2; % 194.2/0.3274
         case {11, 12, 13, 14, 15} % 11/17/2019
             data.kon_1 = 0.4509; % (nM s)^-1 ???
             data.koff_1 = 0.4509; % kd = 1 nM Freed 2017 Cell . kd = 175 nM [Dawson JP et al 2005]
@@ -73,7 +73,7 @@ function data = init_data(data)
             data.kon_7 = 0.04;
             data.koff_7 = 0.9356; 
             data.y0 = zeros(9,1); 
-            data.scale = 262.4007; % Inital guess, 85.91/0.3274  
+            % data.scale = 262.4007; % Inital guess, 85.91/0.3274  
     end
 end
     

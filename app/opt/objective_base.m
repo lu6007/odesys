@@ -5,16 +5,8 @@ function [f, t_exp_interp, y_exp_interp, y_ode_interp] = objective_base(theta, m
     % Update the optimized parameters 
     model = model_fh('complex_ode', 'best_fit', 1, 'multiple_output', 0, ...
         'verbose', 0);  
-    data = model.ode.data;
-    theta_name = model.theta_name;
-    for i = 1:length(theta_name)
-        switch theta_name{i}
-            case 'scale'
-                model.scale = theta(i);
-            otherwise
-                data.(theta_name{i}) = theta(i);
-        end
-    end
+    model = fh.set_model_theta(model, model.theta_name, theta); 
+    data = model.ode.data; 
 
     if isfield(model, 'index') % fyn_gf_model_nodeg
         index = model.index; 
