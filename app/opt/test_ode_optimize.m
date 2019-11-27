@@ -11,6 +11,9 @@
 %% Run simple simulation and load experimental results
 % cd /Users/kathylu/Documents/sof/odesys/app/opt
 
+global optimize_ode_utility_fh; % optimize_ode_model;
+fh = optimize_ode_utility_fh; 
+
 %% Optimize for the a simple model  
 model_name = 'simple_ode'; % 'complex_ode_nodeg'; % 'simple_ode'
 [sol0, sol] = optimize_solve('num_guess', 0, 'model_name', model_name); 
@@ -85,6 +88,25 @@ end
 
 %% Optmize ode_model_1118.m
 num_guess = 10;
-model_name = 'model_1118'; % fy n_endo
-[sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name); 
-title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
+model_name = 'model_1118'; 
+model_id = 6; % 1; 2; 3; 4; 5;
+[sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name, ...
+    'model_id', model_id); 
+title('Model 1118'); 
+
+%% Test the best fitted model for model_1118_6
+model_name = 'model_1118'; 
+model = opt_model_1118(model_name, 'model_id', 6);
+model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+batch_fyn_gf(ode.data, 'multiple_output', 0, 'best_fit', 0, 'verbose', 1, ...
+    'rhs_function', ode.rhs, 'y0', ode.data.y0, ...
+'output_function', ode.output);
+
+%% Optmize ode_model_1118 for concentration dependence
+num_guess = 1;
+model_name = 'model_1118'; 
+model_id = 7; % 1; 2; 3; 4; 5;
+[sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name, ...
+    'model_id', model_id); 
+title('Model 1118 7'); 
+

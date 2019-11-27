@@ -30,7 +30,8 @@ function fh = opt_utility()
     fh.reconcile_exp_ode = @reconcile_exp_ode;
     fh.plot_curve = @plot_curve; 
     fh.set_model_theta = @set_model_theta; 
-    fh.get_theta_upper_bound = @get_theta_upper_bound; 
+    fh.get_theta = @get_theta; 
+    fh.get_theta_bound = @get_theta_bound; 
     fh.output = @output; 
     % General functions
     fh.get_subcell = @get_subcell; 
@@ -42,6 +43,7 @@ end
 % Constraint function for the simple ode model
 function problem = constraint(problem, theta_var, theta_upper_bound) 
 % theta_upper_bound is used in eval()
+% The function is not used in the package yet
 
     % problem.Constraints.thetai_high = (theta_var(i)<= theta_high(i)); 
     % theta(i) <= theta_high(i)
@@ -54,9 +56,9 @@ function problem = constraint(problem, theta_var, theta_upper_bound)
 end
 
 % Constraint initial guess function for the simple ode model
-function theta = initial_guess(x, theta_upper_bound)
-    theta = x.* theta_upper_bound;
-    % theta = [0; 0; 0; 400] + x.*[0.1; 0.1; 0.1; 100];
+function theta = initial_guess(x, theta_bound)
+    theta = theta_bound(:,1) + x.* theta_bound(:,2);
+    % theta = lower_bound + x.*upper_bound;
 end
 
 % function [t, y] = get_exp_data(exp_name, varargin)
@@ -161,20 +163,33 @@ function model = set_model_theta(model, theta_name, theta)
     model.ode.data = data; 
 end
 
-function theta_ub = get_theta_upper_bound(model, theta_name)
-    factor = 10; 
+% function theta_bound = get_theta_bound(model, theta_name)
+% returns the lower (column 1) and upper bound (column 2) of theta values based on their current
+% values. 
+function theta = get_theta(model, theta_name)
     data = model.ode.data; 
     num_theta = length(theta_name);
-    theta_ub = zeros(num_theta, 1); 
+    theta = zeros(num_theta, 1); 
     for i = 1:length(theta_name)
         switch theta_name{i}
             case 'scale'
-                theta_ub(i) = model.scale * factor;
+                theta(i) = model.scale;
             otherwise
-                theta_ub(i) = data.(theta_name{i}) * factor;
+                theta(i) = data.(theta_name{i}); 
         end
     end
-    model.ode.data = data; 
+end
+
+
+% function theta_bound = get_theta_bound(model, theta_name)
+% returns the lower (column 1) and upper bound (column 2) of theta values based on their current
+% values. 
+function theta_bound = get_theta_bound(model, theta_name, varargin)
+    para_name = {'bound_factor'};
+    para_default = {10};
+    bound_factor = parse_parameter(para_name, para_default, varargin);
+    theta = get_theta(model, theta_name); 
+    theta_bound = [theta/bound_factor/bound_factor theta*bound_factor];  
 
 end
 

@@ -1,7 +1,7 @@
 % A standard model function 
 % function model = opt_model_1118(model_name, varargin)
-%     para_name = {'verbose'};
-%     default_value = {1};
+%     para_name = {'verbose', 'theta_bound_factor', 'model_id'};
+%     default_value = {1, 10, 1};
 % model.data = init_data(); 
 % model.init_data = @init_data; 
 % model.rhs = @rhs; 
@@ -9,13 +9,14 @@
 
 % Authors: Shaoying Kathy Lu (shaoying.lu@gmail.com)
 function model = opt_model_1118(model_name, varargin)
-    global optimize_ode_utility_fh;
+    global optimize_ode_utility_fh; 
     fh = optimize_ode_utility_fh; 
 
     % model_name = 'opt_model';
-    para_name = {'verbose'};
-    default_value = {1};
-    verbose = parse_parameter(para_name, default_value, varargin);
+    para_name = {'verbose', 'theta_bound_factor', 'model_id'};
+    default_value = {1, 10, 1};
+    [verbose, theta_bound_factor, model_id] = ...
+        parse_parameter(para_name, default_value, varargin);
     
     if verbose
         fprintf('\nFunction opt_model_1118(): model_name = %s\n', model_name);
@@ -30,25 +31,62 @@ function model = opt_model_1118(model_name, varargin)
     
     % Optimization functions and parameters
     model.objective = @objective;
-    model.constraint = fh.constraint;
+    % model.constraint = fh.constraint;
     model.initial_guess = fh.initial_guess; 
-    model.theta_name = {'kon_1'; 'koff_1'; 'kon_3'; 'kcatoff_3'; 'kdoff_3'; ...
-        'kon_4'; 'koff_4'; 'kon_7'; 'koff_7'};
-    model.theta_upper_bound = [4.5; 45; 1.25; 234.3; 38.02; ...
-        0.02; 0.2; 1; 10]; 
+    
+    if model_id >= 1
+        model.theta_name = {'kon_1'; 'koff_1'; 'kon_3'; 'kcatoff_3'; 'kdoff_3'; ...
+            'kon_4'; 'koff_4'; 'kon_7'; 'koff_7'};
+        model.theta_fit = [0.26031169 15.35232148 0.131752578 12.56740995 35.81094633 ...
+            0.009446086 0.085982789 0.185889161 4.766242707]'; 
+    end
+    
+    if model_id >= 2
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_2'; 'koff_2'; 'kon_4'; 'koff_4'; 'kon_7'; 'koff_7'}; 
+        model.theta_fit = [0.002429011	2.894388505	0.002523534	0.008028778	...
+            0.004306559	0.107611631]';
+    end
+    
+    if model_id >= 3
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_4'; 'koff_4'; 'kon_7'; 'koff_7';....
+            'kcaton_8';'kdon_8'; 'kcatoff_8'; 'kdoff_8'}; 
+        model.theta_fit = [0.003861532	0.019056514	0.000675076	0.016057544	...
+            0.035225733	48.26366535	0.984973073	208.7484753]';
+    end 
+    
+    if model_id >= 4
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_2'; 'koff_2'; 'kcaton_6'; 'kdon_6'; 'vmaxoff_6'; 'kmoff_6'; ...
+            'kon_4'; 'koff_4'; 'kon_5'}; 
+        model.theta_fit = [0.004650675	6.293209761	0.008951284	191.4474109	0.000616027	...
+            16.57132624	0.002065168	0.102335935	0.09548778]';
+    end
+
+    if model_id >= 5
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_2'; 'koff_2'; 'kcaton_6'; 'kdon_6'; 'vmaxoff_6'; 'kmoff_6'; ...
+            'kon_4'; 'koff_4'}; 
+        model.theta_fit = [0.011413924	9.60380283	0.013044219	211.1324765	0.004019118 ...
+            4.195132281	0.000941996	0.290217319];
+    end
+    
+    if model_id >= 6
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_2'; 'koff_2'; 'kon_4'; 'koff_4'; 'kon_7'; 'koff_7'};
+        model.theta_fit = [0.013780574	9.591754187	1.39E-05	0.30794755	0.00053241	0.012744546];
+    end
+
+    if model_id >= 7 % for plotting batch concentration
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_1'; 'koff_1'; 'kon_2'; 'koff_2'; 'kon_3'; 'kcatoff_3'; 'kdoff_3'};
+        model.index = [2; 3; 5; 6]; 
+    end
+
     %
-    model.theta_fit = [0.26031169 15.35232148 0.131752578 12.56740995 35.81094633 ...
-        0.009446086 0.085982789 0.185889161 4.766242707]'; 
-    model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
-    model.theta_name = {'kon_2'; 'koff_2'; 'kon_4'; 'koff_4'; 'kon_7'; 'koff_7'}; 
-    model.theta_upper_bound = fh.get_theta_upper_bound(model, model.theta_name);
-    % 
-    model.theta_fit = [0.002429011	2.894388505	0.002523534	0.008028778	...
-        0.004306559	0.107611631]';
-    model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
-    model.theta_name = {'kon_4'; 'koff_4'; 'kon_7'; 'koff_7';....
-        'kcaton_8';'kdon_8'; 'kcatoff_8'; 'kdoff_8'}; 
-    model.theta_upper_bound = fh.get_theta_upper_bound(model, model.theta_name);
+    model.theta_bound = fh.get_theta_bound(model, model.theta_name, ...
+        'bound_factor', theta_bound_factor);
 end % function model = opt_model_1118(model_name, varargin)
 
 function [f, t_exp_interp, y_exp_interp, y_ode_interp] = ...

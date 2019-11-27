@@ -1,10 +1,15 @@
+% function [f, t_exp_interp, y_exp_interp, y_ode_interp] = objective_base(theta, model_fh)
+% Calulatete the objective function
 function [f, t_exp_interp, y_exp_interp, y_ode_interp] = objective_base(theta, model_fh)
     global optimize_ode_utility_fh;
     fh = optimize_ode_utility_fh; 
     
+    global optimize_ode_model; 
+    model = optimize_ode_model; 
+    
     % Update the optimized parameters 
-    model = model_fh('complex_ode', 'best_fit', 1, 'multiple_output', 0, ...
-        'verbose', 0);  
+%     model = model_fh('complex_ode', 'best_fit', 1, 'multiple_output', 0, ...
+%         'verbose', 0);  
     model = fh.set_model_theta(model, model.theta_name, theta); 
     data = model.ode.data; 
 

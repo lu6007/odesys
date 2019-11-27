@@ -5,7 +5,9 @@
 
 % Authors: Shaoying Kathy Lu (shaoying.lu@gmail.com); 
 function model_obj = fyn_gf_model(model_name, varargin)
-    global optimize_ode_utility_fh;
+    % The global variable optimize_ode_model is necessary since the
+    % objective() function cannot take input other than theta. 
+    global optimize_ode_utility_fh optimize_ode_model;
     fh = optimize_ode_utility_fh; 
 
     % model_name = 'complex_ode';
@@ -39,7 +41,10 @@ function model_obj = fyn_gf_model(model_name, varargin)
     model_obj.index = 3; % [egf] = 50 ng/ml %[3; 5; 6] % 50, 10, 5
     model_obj.theta_name = {'kon_4'; 'koff_4'; 'kcaton_7'; 'kdon_7'; ...
         'kcatoff_7'; 'kdoff_7'};
-    model_obj.theta_upper_bound = [10; 1; 1; 500; 1; 500]; 
+    % model_obj.theta_upper_bound = [10; 1; 1; 500; 1; 500]; 
+    model_obj.theta_bound = fh.get_theta_bound(model_obj, model_obj.theta_name);
+    
+    optimize_ode_model = model_obj; 
 
 end % function model_obj = fyn_gf_model(model_name)
 
