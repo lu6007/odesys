@@ -31,7 +31,7 @@ function model_obj = simple_ode_model(model_name, varargin)
     model_obj.initial_guess = fh.initial_guess; 
     model_obj.index = 3; % [egf] = 50 ng/ml
     model_obj.theta_name = {'k_caton_4'; 'k_catoff_4'; 'k_on_3'};
-    model_obj.theta_upper_bound = [1; 1; 1];
+    model_obj.theta_bound = [[0;0; 0] [1; 1; 1]];
 end
 
 % Objective function for the simple ode model 'egfr_huang_v3'

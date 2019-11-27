@@ -96,13 +96,14 @@ end % switch data.model
 
 % Make the plot
 num_exp = length(conc_str); 
-line_type = {'ro', 'go', 'bo', 'k-', 'r-', 'g-', 'b-'};
+line_type = {'r-', 'g-', 'b-', 'k-', 'ro', 'go', 'bo'};
+fs = 18; lw = 2.0; 
 if show_figure 
     if isempty(output_fh)
         y_label = 'Active Fyn Kianse (nM)';
-        my_figure; hold on;
+        my_figure('font_size', fs, 'line_width', lw); hold on;
         for i = 1:num_exp
-            plot(t{i}/60, output{i}, line_type{i}, 'LineWidth', 1.5);
+            plot(t{i}/60, output{i}, line_type{i}, 'LineWidth', lw);
             xlabel('Time (min)'); ylabel(y_label);
         end
         legend(conc_str);
@@ -111,9 +112,9 @@ if show_figure
         index = data.output_index;
         num_species = length(index); 
         for j = 1:num_species
-            my_figure; hold on;
+            my_figure('font_size', fs, 'line_width', lw); hold on;
             for i = 1:num_exp
-                plot(t{i}/60, output{i}(:,j), line_type{i}, 'LineWidth', 1.5);
+                plot(t{i}/60, output{i}(:,j), line_type{i}, 'LineWidth', lw);
                 xlabel('Time (min)'); 
                 % ylabel(data.species_name{index(j)});
                 ylabel([data.species_name{index(j)}, ' (nM)']);

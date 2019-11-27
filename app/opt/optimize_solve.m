@@ -22,7 +22,6 @@ switch model_name
     case 'simple_ode'
         model = simple_ode_model(model_name, 'verbose', verbose);
         xy_axis = [-200 2000 0 180];
-        
     case 'complex_ode' 
         % best_fit only makes a difference if num_guess = 0
         model = fyn_gf_model(model_name, 'multiple_output', 0, ...

@@ -24,7 +24,7 @@ axis([-5 35 -5 25]);
 
 %% Run simulation of a complex model
 name = 'complex_ode'; 
-model= complex_ode(name, 'best_fit', 0); 
+model= complex_ode(name, 'best_fit', 0, 'multiple_output', 1); 
 fyn_gf_ode_solve(model.data, 'test_basal_level', 0, 'show_figure', 1, ...
 'rhs_function', model.rhs, 'y0', model.data.y0, 'output_function', model.output);
 title('Complex ODE');

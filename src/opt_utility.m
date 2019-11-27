@@ -127,9 +127,10 @@ function plot_curve(sol0, sol, varargin)
     y_ode = sol.y_ode;
     % y_exp = sol.y_exp; 
     
-    lw = 1.5; % line_width
+    fs = 18; % font_size
+    lw = 2.0; % line_width
     if ~iscell(t_old)
-        my_figure; hold on; 
+        my_figure('font_size', fs, 'linewidth', lw); hold on; 
         plot(t_old, y_exp_old, 'r-', 'LineWidth', lw);
         plot(t_old, y_ode_old, 'b--', 'LineWidth', lw); 
         plot(t, y_ode, 'b', 'LineWidth', 1.5);
