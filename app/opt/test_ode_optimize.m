@@ -76,14 +76,8 @@ model_name = ['complex_ode_nodeg_endo', endo_str]; % fyn_endo
 title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
 
 %% Copy the results to temp
-if ~num_guess
-    num_guess = 1;
-end
-num_col = 2* size(sol0{1}.theta, 1)+2; 
-temp = zeros(num_guess, num_col);
-for i = 1: num_guess
-    temp(i,:) = [sol0{i}.theta' sol0{i}.error sol{i}.theta' sol{i}.error];
-end
+clear temp;
+temp = fh.get_theta_error(sol0, sol); 
 % Copy temp from MABLAB variables to excel
 
 %% Optmize ode_model_1118.m
@@ -98,15 +92,25 @@ title('Model 1118');
 model_name = 'model_1118'; 
 model = opt_model_1118(model_name, 'model_id', 6);
 model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+ode = model.ode; 
 batch_fyn_gf(ode.data, 'multiple_output', 0, 'best_fit', 0, 'verbose', 1, ...
     'rhs_function', ode.rhs, 'y0', ode.data.y0, ...
 'output_function', ode.output);
 
 %% Optmize ode_model_1118 for concentration dependence
-num_guess = 1;
+num_guess = 0;
 model_name = 'model_1118'; 
-model_id = 7; % 1; 2; 3; 4; 5;
+model_id = 9; % 7; 8; 
 [sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name, ...
     'model_id', model_id); 
-title('Model 1118 7'); 
 
+%% Run the best fit complex-nodeg model with different parameter values in batch
+model = opt_model_1118('model_1118');
+model_id = 9; 
+field_name = {'kon_2', 'koff_2', 'kon_4', 'kon_7', 'koff_7'};
+for i = 1:length(field_name)
+    model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+    ode = model.ode; 
+    batch_fyn_gf(ode.data, 'rhs_function', ode.rhs, 'y0', ode.data.y0, ...
+    'output_function', ode.output, 'field_name', field_name{i});
+end

@@ -5,6 +5,10 @@
 %     fh.get_exp_data = @get_exp_data;
 %     fh.reconcile_exp_ode = @reconcile_exp_ode;
 %     fh.plot_curve = @plot_curve; 
+%     fh.set_model_theta = @set_model_theta; 
+%     fh.get_theta = @get_theta; 
+%     fh.get_theta_bound = @get_theta_bound; 
+%     fh.get_theta_error = @get_theta_error; 
 %     % ODE functions
 %     fh.output = @output; 
 %     % General functions
@@ -22,6 +26,7 @@
 %     [t_exp_i, y_exp_i] = fh.get_exp_data(exp_name, 'index', index, 'scale', scale); 
 % 
 
+% Author: Shaoying Lu , shaoying.lu@gmail.com
 function fh = opt_utility()
     % Useful functions for optimizatoin
     fh.constraint = @constraint;
@@ -32,6 +37,8 @@ function fh = opt_utility()
     fh.set_model_theta = @set_model_theta; 
     fh.get_theta = @get_theta; 
     fh.get_theta_bound = @get_theta_bound; 
+    fh.get_theta_error = @get_theta_error; 
+    % ODE functions
     fh.output = @output; 
     % General functions
     fh.get_subcell = @get_subcell; 
@@ -191,6 +198,15 @@ function theta_bound = get_theta_bound(model, theta_name, varargin)
     theta = get_theta(model, theta_name); 
     theta_bound = [theta/bound_factor/bound_factor theta*bound_factor];  
 
+end
+
+function temp = get_theta_error(sol0, sol)
+    num_guess = length(sol0);
+    num_col = 2* size(sol0{1}.theta, 1)+2; 
+    temp = zeros(num_guess, num_col);
+    for i = 1: num_guess
+        temp(i,:) = [sol0{i}.theta' sol0{i}.error sol{i}.theta' sol{i}.error];
+    end
 end
 
 % function output = get_subcell(input, index)

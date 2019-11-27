@@ -35,15 +35,15 @@ switch data.model
                 % 1 ng/ml EGF = 1/6400 nmol/ ml = 1000/6400 nM = 0.15625 nM
                 conc_value = [78.125, 15.625, 7.8125, 3.90625, 1.5625, 0.78125, 0.15625];
                 % conc_value = [78.125, 15.625, 7.8125, 3.90625, 1.5625, 0.78125, 0.15625]; % nM
-            case {'kon_2'}
-                conc_str = {'1', '10', '1e2', '1e3', '1e4', '1e5', '1e6'};
-                conc_value = data.(field_name) * (10.^(0:6))';
-            case {'koff_2'}
-                conc_str = {'1e3', '1e4', '1e5', '1e6', '1e7', '1e8','1e9'};
-                conc_value = data.(field_name) * (10.^(3:9))';
-            case {'kon_4', 'kcaton_7', 'kdon_7', 'kcatoff_7', 'kdoff_7'}
-                conc_str = {'1e-3', '1e-2', '1e-1', '1', '10', '1e2', '1e3'};
-                conc_value = data.(field_name) * (10.^(-3:3))';
+%             case {'kon_2'}
+%                 conc_str = {'1', '10', '1e2', '1e3', '1e4', '1e5', '1e6'};
+%                 conc_value = data.(field_name) * (10.^(0:6))';
+%             case {'koff_2'}
+%                 conc_str = {'1e3', '1e4', '1e5', '1e6', '1e7', '1e8','1e9'};
+%                 conc_value = data.(field_name) * (10.^(3:9))';
+            otherwise %case {'kon_4', 'kcaton_7', 'kdon_7', 'kcatoff_7', 'kdoff_7'}
+                conc_str = {'1e3', '1e2', '1e1', '1', '1e-1', '1e-2', '1e-3'};
+                conc_value = data.(field_name) * (10.^(3:-1:-3))';
         end
         
         % Only run a portion of experiments chosen by the variable index
@@ -71,7 +71,6 @@ switch data.model
 
         
         %  
-        % conc_str = {'1e-3', '1e-2', '1e-1', '1', '10', '1e2', '1e3'};
         num_exp = length(conc_str); 
         t = cell(num_exp,1);
         output = cell(num_exp, 1); 
@@ -97,7 +96,7 @@ end % switch data.model
 
 % Make the plot
 num_exp = length(conc_str); 
-line_type = {'r-', 'g-', 'b-', 'k-', 'ro', 'go', 'bo'};
+line_type = {'ro', 'go', 'bo', 'k-', 'r-', 'g-', 'b-'};
 if show_figure 
     if isempty(output_fh)
         y_label = 'Active Fyn Kianse (nM)';

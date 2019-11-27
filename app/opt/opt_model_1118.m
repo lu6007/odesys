@@ -69,19 +69,37 @@ function model = opt_model_1118(model_name, varargin)
         model.theta_name = {'kon_2'; 'koff_2'; 'kcaton_6'; 'kdon_6'; 'vmaxoff_6'; 'kmoff_6'; ...
             'kon_4'; 'koff_4'}; 
         model.theta_fit = [0.011413924	9.60380283	0.013044219	211.1324765	0.004019118 ...
-            4.195132281	0.000941996	0.290217319];
+            4.195132281	0.000941996	0.290217319]';
     end
     
-    if model_id >= 6
+    if model_id >= 6 % Fit single concentration
         model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
         model.theta_name = {'kon_2'; 'koff_2'; 'kon_4'; 'koff_4'; 'kon_7'; 'koff_7'};
-        model.theta_fit = [0.013780574	9.591754187	1.39E-05	0.30794755	0.00053241	0.012744546];
+        model.theta_fit = [0.013780574	9.591754187	1.39E-05 0.30794755	0.00053241	0.012744546]';
     end
 
-    if model_id >= 7 % for plotting batch concentration
+    if model_id >= 7 % Fit concentration dependence
         model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
         model.theta_name = {'kon_1'; 'koff_1'; 'kon_2'; 'koff_2'; 'kon_3'; 'kcatoff_3'; 'kdoff_3'};
         model.index = [2; 3; 5; 6]; 
+        model.theta_fit = [0.419148398	2.719934631	0.000877458	88.72167814	0.769892656	62.89582402 ...
+            139.2952237]';
+    end
+
+    if model_id >= 8 % Fit concentration dependence, same parameters as model_id = 5
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_2'; 'koff_2'; 'kcaton_6'; 'kdon_6'; 'vmaxoff_6'; 'kmoff_6'; ...
+            'kon_4'; 'koff_4'}; 
+        % model.index = [2; 3; 5; 6]; 
+        model.theta_fit = [0.007515766	529.671426	0.063154203	1799.131895	0.027426714	...
+            30.39885476	6.93E-05 1.50340628]';
+    end
+
+    if model_id >= 9 % Fit concentration dependence, same parameters as model_id = 6
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_2'; 'koff_2'; 'kon_4'; 'koff_4'; 'kon_7'; 'koff_7'}; 
+        % model.index = [2; 3; 5; 6]; 
+        model.theta_fit = [0.009876822 879.6740399 0.000311732 7.468174309 0.000737206 0.017578657]'; 
     end
 
     %
