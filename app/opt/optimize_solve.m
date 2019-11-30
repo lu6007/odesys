@@ -18,6 +18,8 @@ default_value = {1, 'simple_ode', 4};
 [num_guess, model_name, model_id] = parse_parameter(para_name, default_value, varargin);
 
 verbose = 1;
+disp('Function optimize_solve():');
+
 switch model_name
     case 'simple_ode'
         model = simple_ode_model(model_name, 'verbose', verbose);
@@ -66,7 +68,6 @@ switch model_name
         xy_axis = [-200 2000 0 30];
         model = opt_model_1118(model_name, 'model_id', model_id);
 end
-disp('Function optimize_solve():');
 disp(model); 
 disp(model.ode.data);
 optimize_ode_model = model; 
@@ -93,7 +94,7 @@ problem = optimproblem('Objective', object_express); % problem.Objective = objec
 
 % Latin hypercube sample
 time_start = tic; 
-fprintf('\nFunction optimize_solve(): num_guess = %d\n', num_guess); 
+fprintf('\n num_guess = %d\n', num_guess); 
 if num_guess == 0
     use_latin_hypercube_sample = false; 
     % theta = [0.040558595	5.720696138	0.001076275	0.195210427	1.738250076	0.697117467	340.8719999	548.4923813]';
@@ -104,8 +105,7 @@ else
     X = lhsdesign(num_guess, num_theta);
 end
 warning('off', 'all');
-fprintf('\nFunction optimize_solve(): use_latin_hypercube_sample = %d\n', use_latin_hypercube_sample);
-fprintf('\t num_guess = %d\n', num_guess); 
+fprintf('\t use_latin_hypercube_sample = %d\n', use_latin_hypercube_sample);
 fprintf('\t Turned warnings off\n'); 
 sol0 = cell(num_guess, 1);
 sol = cell(num_guess, 1); 
@@ -151,7 +151,7 @@ for i = 1:num_guess
 end % for i = 1:num_guess
 
 time_used = toc(time_start); 
-fprintf('Function test_optimize_ode(): time_used = %f (sec) \n', time_used);
+fprintf('time_used = %f (sec) \n', time_used);
 
 end % function
 

@@ -41,6 +41,7 @@ function fh = opt_utility()
     % ODE functions
     fh.output = @output; 
     % General functions
+    fh.get_root = @get_root; 
     fh.get_subcell = @get_subcell; 
     fh.normalize_l2norm_square_difference = @normalize_l2norm_square_difference; 
     fh.l2norm_square = @l2norm_square;
@@ -273,4 +274,20 @@ end
 % get the string for display '_' in a figure
 function latex_str = get_latex(str)
     latex_str = regexprep(str, '\_', '\\_'); 
+end
+
+% get the root direction for data
+function root = get_root()
+    system_name = computer;
+    fprintf('\nFunction opt_utililty.get_root(): \n');
+    switch  system_name
+        case {'MACI64', 'MACI32'}
+            root = '/Users/kathylu/Documents/sof/odesys/data/';
+        case {'PCWIN64', 'PCWIN32'}
+            root = 'C:/Users/kalu/Documents/sof/odesys/data/';
+        otherwise
+            fprintf('Error: system_name = %s, root not defined! \n', ...
+                system_name);
+    end
+    fprintf('root = %s\n', root); 
 end

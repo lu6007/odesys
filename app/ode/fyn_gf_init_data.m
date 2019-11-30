@@ -4,6 +4,9 @@
 % All Rights Reserved
 
 function data = fyn_gf_init_data( model )
+fh = opt_utility();
+root = fh.get_root();
+%
 data.model = model;
 data.k_don_4 = 23.39; %nm kd = kr/kf = 0.94/40 *1000 nM = 23.39 nM by degf-egfr-src
 data.k_doff_4 = data.k_don_4;
@@ -164,33 +167,11 @@ switch(model)
         
         % figure; plot(t/60, fyn_act*15.7+0.145); title('[FYN ACT]'); xlabel('Time (min)');
         % hold on; plot(fyn_act_exp(:,1)-5, fyn_act_exp(:,2),'ro');
-        
+       
     case 'exp_hela_egf'
-        data.file = '/Users/kathylu/Documents/sof/odesys/data/0124_2018/b.mat';
-        % Scale of experimental data
-        % data.scale = 450.012; % best fit for the model 'egfr_huang_v3'; 
-        % data.scale = 428.7902; % simple ode, estimated by 140/0.3265
-        % data.scale = 245.0115; % estimated by 140/sqrt(0.3265) for nonlinear case;
-
-%     case 'exp_hela_egf_2' % need to move to optimization function
-%         data.file = '/Users/kathylu/Documents/sof/odesys/data/0124_2018/b.mat';
-%         % Scale of experimental data for 'egfr2'
-%         data.scale = 496.5810; % complex ode, estimated by 162.6/0.3274
-% 
-%     case 'exp_hela_egf_3' % need to move to optimization function
-%         data.file = '/Users/kathylu/Documents/sof/odesys/data/0124_2018/b.mat';
-%         % Scale of experimental data for 'egfr2'
-%         % data.scale = 445.0214; % complex ode, estimated by 145.7/0.3274
-%         data.scale = 593.2; % 194.2/0.3274
-
+        data.file = [root, '0124_2018/b.mat'];     
     case 'exp_mef_pdgf'
-        data.file = '/Users/kathylu/Documents/sof/odesys/data/1019_2019/pdgf/input/exp.mat';
-        % Scale of experimental data
-        % data.scale = 450.012; % best fit for the model 'egfr_huang_v3'; 
-        % data.scale = 428.7902; % simple ode, estimated by 140/0.3265
-        % data.scale = 245.0115; % estimated by 140/sqrt(0.3265) for nonlinear case;
-
-
+        data.file = [root, '1019_2019/pdgf/input/exp.mat'];
 end
 return;
 

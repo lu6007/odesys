@@ -81,9 +81,9 @@ temp = fh.get_theta_error(sol0, sol);
 % Copy temp from MABLAB variables to excel
 
 %% Optmize ode_model_1118.m
-num_guess = 10;
+num_guess = 0;
 model_name = 'model_1118'; 
-model_id = 6; % 1; 2; 3; 4; 5;
+model_id = 6; % 1; 2; 3; 4; 5; 6; 
 [sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name, ...
     'model_id', model_id); 
 title('Model 1118'); 
@@ -98,9 +98,9 @@ batch_fyn_gf(ode.data, 'multiple_output', 0, 'best_fit', 0, 'verbose', 1, ...
 'output_function', ode.output);
 
 %% Optmize ode_model_1118 for concentration dependence
-num_guess = 0;
+num_guess = 3;
 model_name = 'model_1118'; 
-model_id = 9; % 7; 8; 
+model_id = 12; % 7; 8; 9;  
 [sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name, ...
     'model_id', model_id); 
 
