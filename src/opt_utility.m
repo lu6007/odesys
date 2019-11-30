@@ -279,15 +279,15 @@ end
 % get the root direction for data
 function root = get_root()
     system_name = computer;
-    fprintf('\nFunction opt_utililty.get_root(): \n');
     switch  system_name
         case {'MACI64', 'MACI32'}
             root = '/Users/kathylu/Documents/sof/odesys/data/';
         case {'PCWIN64', 'PCWIN32'}
             root = 'C:/Users/kalu/Documents/sof/odesys/data/';
         otherwise
+            fprintf('\nFunction opt_utililty.get_root(): \n');
             fprintf('Error: system_name = %s, root not defined! \n', ...
                 system_name);
     end
-    fprintf('root = %s\n', root); 
+    % fprintf('root = %s\n', root); 
 end
