@@ -98,9 +98,9 @@ batch_fyn_gf(ode.data, 'multiple_output', 0, 'best_fit', 0, 'verbose', 1, ...
 'output_function', ode.output);
 
 %% Optmize ode_model_1118 for concentration dependence
-num_guess = 3;
+num_guess = 0;
 model_name = 'model_1118'; 
-model_id = 12; % 7; 8; 9;  
+model_id = 10; % 7; 8; 9;  
 [sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name, ...
     'model_id', model_id); 
 
