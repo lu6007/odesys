@@ -5,16 +5,17 @@
 function [t, output] = batch_fyn_gf(data, varargin)
 para_name = {'show_figure', 'rhs_function', 'y0', 'output_function', 'field_name', 'verbose', ...
     'probe_field', 'probe_factor', 'index'};
-default_value = {1, [], [], [], 'gf_1', 1, '', 1, []};
+default_value = {1, [], [], [], 'gf_1', 1, ...
+    '', 1, []};
 [show_figure, rhs_fh, y0, output_fh, field_name, verbose, probe_field, probe_factor, index] = ...
     parse_parameter(para_name, default_value, varargin);
 
-% concentration string
-conc_str = {'500 ng/ml', '100 ng/ml', '50 ng/ml', '25 ng/ml', '10 ng/ml', '5 ng/ml', '1 ng/ml'};
+% % concentration string
+% conc_str = {'500 ng/ml', '100 ng/ml', '50 ng/ml', '25 ng/ml', '10 ng/ml', '5 ng/ml', '1 ng/ml'};
 
 switch data.model
     case {'exp_hela_egf', 'exp_hela_egf_2', 'exp_hela_egf_3'} 
-    % Load experimental training data
+        % Load experimental training data
         res = load(data.file);
         n = length(res.sheets);
         t = cell(n,1);
@@ -26,6 +27,7 @@ switch data.model
             % y{i} = sqrt(res.means{n+1-i}-1)*data.scale; % convert to nM nonlinearly
         end
         output = y; 
+        conc_str = {'500 ng/ml', '100 ng/ml', '50 ng/ml', '25 ng/ml', '10 ng/ml', '5 ng/ml', '1 ng/ml'};
         clear res;
     otherwise % 'simple_ode', 'complex_ode', 'complex_ode_nodeg'
         % Run simulations with different concentration
@@ -33,8 +35,8 @@ switch data.model
             case 'gf_1' % conc_str already defined above
                 % EGF molecular weight = 2600/mol
                 % 1 ng/ml EGF = 1/6400 nmol/ ml = 1000/6400 nM = 0.15625 nM
-                conc_value = [78.125, 15.625, 7.8125, 3.90625, 1.5625, 0.78125, 0.15625];
-                % conc_value = [78.125, 15.625, 7.8125, 3.90625, 1.5625, 0.78125, 0.15625]; % nM
+                conc_value = [78.125, 15.625, 7.8125, 3.90625, 1.5625, 0.78125, 0.15625]; % nM
+                conc_str = {'500 ng/ml', '100 ng/ml', '50 ng/ml', '25 ng/ml', '10 ng/ml', '5 ng/ml', '1 ng/ml'};
 %             case {'kon_2'}
 %                 conc_str = {'1', '10', '1e2', '1e3', '1e4', '1e5', '1e6'};
 %                 conc_value = data.(field_name) * (10.^(0:6))';
@@ -42,8 +44,17 @@ switch data.model
 %                 conc_str = {'1e3', '1e4', '1e5', '1e6', '1e7', '1e8','1e9'};
 %                 conc_value = data.(field_name) * (10.^(3:9))';
             otherwise %case {'kon_4', 'kcaton_7', 'kdon_7', 'kcatoff_7', 'kdoff_7'}
-                conc_str = {'1e3', '1e2', '1e1', '1', '1e-1', '1e-2', '1e-3'};
-                conc_value = data.(field_name) * (10.^(3:-1:-3))';
+                % conc_str = {'1e3', '1e2', '1e1', '1', '1e-1', '1e-2', '1e-3'};
+                % conc_value = data.(field_name) * (10.^(3:-1:-3))';
+                % conc_str = {'1', '1e-1', '1e-2', '1e-3', '1e-4', '1e-5', '1e-6'};
+                % conc_value = data.(field_name) * (10.^(0:-1:-6))';
+                temp = (10.^(0:6))';
+                nn = size(temp, 1);
+                conc_str = cell(nn, 1);
+                for i = 1:nn
+                    conc_str{i} = sprintf('%1.0e', temp(i)); 
+                end
+                conc_value = data.(field_name) * temp; clear temp;
         end
         
         % Only run a portion of experiments chosen by the variable index

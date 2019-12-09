@@ -131,6 +131,7 @@ for i = 1:num_guess
     % Solve the problem with MATLAB optimizer fmincon
     % option = optimoptions('fmincon', 'Display', 'iter');
     option = optimoptions('fmincon', 'Display', 'off');
+    % display(option);
     [temp, error] = solve(problem, sol0{i}, 'options', option);
     sol{i}.theta = temp.theta; clear temp; 
     sol{i}.error = error; 
