@@ -1,6 +1,6 @@
-% function [f, t_exp_interp, y_exp_interp, y_ode_interp] = objective_base(theta, model_fh)
+% function [f, t_exp_interp, y_exp_interp, y_ode_interp] = objective_base(theta)
 % Calulatete the objective function
-function [f, t_exp_interp, y_exp_interp, y_ode_interp] = objective_base(theta, model_fh)
+function [f, t_exp_interp, y_exp_interp, y_ode_interp] = objective_base(theta)
     global optimize_ode_utility_fh;
     fh = optimize_ode_utility_fh; 
     

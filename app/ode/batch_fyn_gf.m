@@ -80,7 +80,6 @@ switch data.model
         end % if ~isempty(probe_field)
         % data.ptp_total = data.ptp_total*10; 
 
-        
         %  
         num_exp = length(conc_str); 
         t = cell(num_exp,1);

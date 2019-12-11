@@ -108,32 +108,34 @@ model_id = 9; % 7; 8; 9;
 %% Optmize ode_model_1118 for concentration dependence
 num_guess = 0;
 model_name = 'model_1118'; 
-model_id = 10; % 10, 13, 14, 15 
+model_id = 12; % 10, 13, 14, 15 
+% rng(1); 
 [sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name, ...
-    'model_id', model_id); 
+    'model_id', model_id, 'global_optimization', 0); 
 
 
-%% Run the best fit complex-nodeg model with different parameter values in batch
-model_id = 12; % ??? need some work
+%% Run the best fit model_1118 with different parameter values in batch
+model_id = 12; % Initialize to the best fit parameters for model 9
 model = opt_model_1118('model_1118', 'model_id', model_id);
-field_name = {'kon_2', 'koff_2', 'kon_4', 'kon_7', 'koff_7'};
-field_value = {1e6, 1e-6, 1e-6, 1e-6, 1e6}; 
+% The control group
+model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+ode = model.ode; 
+batch_fyn_gf(ode.data, 'rhs_function', ode.rhs, 'y0', ode.data.y0, ...
+'output_function', ode.output);
+
+% The probed group
+% field_name = {'kon_2', 'koff_2', 'kon_4', 'koff_4', 'kon_7', 'koff_7'};
+% field_value = {1e+1, 1e-1, 1e-6, 1e6, 1e1, 1e-1}; 
+% field_name = {'kon_1', 'koff_1', 'kon_3', 'kcatoff_3', 'kdoff_3'};
+% field_value = {1e1, 1e-1, 1e1, 1e-2, 1e-2}; 
+% field_name = {'kon_5', 'vmaxoff_6', 'kmoff_6'};
+% field_value = {1e1, 1e-2, 0.5}; 
+field_name = {'koff_2', 'koff_2', 'gfr_total'};
+field_value = {1e+2, 1e+4, 1e3}; 
 for i = 1:length(field_name)
     model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
     ode = model.ode; 
     batch_fyn_gf(ode.data, 'rhs_function', ode.rhs, 'y0', ode.data.y0, ...
     'output_function', ode.output, 'probe_field', field_name{i}, ...
     'probe_factor', field_value{i});
-end
-
-%% Run the best fit complex-nodeg model with different parameter values in batch
-model = opt_model_1118('model_1118');
-model_id = 12;
-% field_name = {'koff_2', 'kon_4', 'koff_7'};
-field_name = {'kon_2', 'koff_4', 'kon_7'}; 
-for i = 1:length(field_name)
-    model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
-    ode = model.ode; 
-    batch_fyn_gf(ode.data, 'rhs_function', ode.rhs, 'y0', ode.data.y0, ...
-    'output_function', ode.output, 'field_name', field_name{i});
 end

@@ -106,10 +106,13 @@ function model = opt_model_1118(model_name, varargin)
         model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
         model.theta_name = {'kon_1'; 'koff_1'; 'kon_2'; 'koff_2'; 'kon_3'; 'kcatoff_3'; 'kdoff_3'};
         model.index = [2; 3; 5];
-%         model.theta_fit = [2.57637294	2.855642128	0.022710822	35.12714557	0.003079185 ...
-%             46.72058452	279.8101348]';
-        model.theta_fit = [0.535876586	0.489827576	0.003363463	72.03986762	0.039343271	...
-            19.66399713	89.77301467]'; 
+        if model_id <= 12
+        model.theta_fit = [2.57637294	2.855642128	0.022710822	35.12714557	0.003079185 ...
+            46.72058452	279.8101348]';
+        elseif model_id >= 13
+            model.theta_fit = [0.535876586	0.489827576	0.003363463	72.03986762	0.039343271	...
+                19.66399713	89.77301467]'; 
+        end
     end
     
     if model_id >= 11 && model_id <= 12 % Fit concentration dependence
@@ -154,9 +157,6 @@ function model = opt_model_1118(model_name, varargin)
         model.theta_fit = []';
     end
 
-        
-
-
 
     %
     model.theta_bound = fh.get_theta_bound(model, model.theta_name, ...
@@ -166,8 +166,7 @@ end % function model = opt_model_1118(model_name, varargin)
 function [f, t_exp_interp, y_exp_interp, y_ode_interp] = ...
     objective(theta)
     
-    model_fh = @opt_model_1118;
-    [f, t_exp_interp, y_exp_interp, y_ode_interp] = objective_base(theta, model_fh);
+    [f, t_exp_interp, y_exp_interp, y_ode_interp] = objective_base(theta);
     
 end
 
