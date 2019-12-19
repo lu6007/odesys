@@ -13,9 +13,11 @@ function ode = ode_model_1118(model_name, varargin)
     global optimize_ode_utility_fh;
     fh = optimize_ode_utility_fh; 
 
-    para_name = {'multiple_output', 'best_fit', 'verbose', 'fyn_endo'};
-    default_value = {0, 1, 1, 0};
-    [multiple_output, best_fit, verbose, fyn_endo] = parse_parameter(para_name, default_value, varargin);
+    para_name = {'multiple_output', 'best_fit', 'verbose', 'fyn_endo', ...
+        'ode_id'};
+    default_value = {0, 1, 1, 0, 1};
+    [multiple_output, best_fit, verbose, fyn_endo, ode_id] = ...
+        parse_parameter(para_name, default_value, varargin);
     
     if verbose
         fprintf('\nFunction ode_model_1118(): model_name = %s\n', model_name);
@@ -26,7 +28,8 @@ function ode = ode_model_1118(model_name, varargin)
     data.model = model_name;
     data.multiple_output = multiple_output;
     data.best_fit = best_fit; 
-    data.fyn_endo = fyn_endo; 
+    data.fyn_endo = fyn_endo;
+    data.ode_id = ode_id; 
         
     %
   	ode.data = init_data(data); 
@@ -48,6 +51,7 @@ function data = init_data(data)
     if multiple_output
         data.output_index = [1:4, 6:8]; % 8; % Sensor %[1:4, 6:8];
     end
+    
 end
     
 function data = init_data_original(data) % complex ode with single output
@@ -64,32 +68,41 @@ function data = init_data_original(data) % complex ode with single output
     data.gf_1 = 7.8125; % 50 ng/ml, [78.125, 15.625, 7.8125, 3.90625, 1.5625, 0.78125, 0.15625]; 
 
     % Reaction Parameters
-    data.kon_1 = 0.4509;        % (nM s)^(-1) [Iwamoto et al. 2016 PCB] -> EGF-EGFR
-    data.koff_1 = 0.4509*10;       %   % s^(-1) kd = 1 nM [Freed 2017 Cell], kd = 175 nM [Dawson JP et al 2005] 
+    data.kon_1 = 0.4509*10;        % (nM s)^(-1) [Iwamoto et al. 2016 PCB] -> EGF-EGFR
+    data.koff_1 = 0.4509;       %   % s^(-1) kd = 1 nM [Freed 2017 Cell], kd = 175 nM [Dawson JP et al 2005] 
     data.kon_2 = 9.917e-4;      % (nM s)^-1 [Dawson et al 2005; Coban et al. 2015] 
     data.koff_2 = 1.19;         % s^-1 [Coban et al. 2015 Biophys J]
     data.kon_3 = 0.125;         % s^-1 [Kim Y et al. 2012 Biochmistry]
     data.kcatoff_3 = 23.43;     % (nM s)^-1 [Shin et al. 2018 PCB; Iwamoto et al. 2016 PCB]
     data.kdoff_3 = 3.802;       % nM [Shin et al. 2018 PCB; Iwamoto et al. 2016 PCB]
-    %%%
-    data.kon_4 = 0.02/100;       % s^(-1), to be fitted  
+    data.kon_4 = 0.02/100; 
     data.koff_4 = 0.02;         % s^(-1) [Iwamoto et al. 2016 PCB]
-    data.kon_5 = 0.03;       % s^(-1) [Iwamoto et al. 2016 PCB]
-    %%%  6: Negative regulation and concentration dependence
-    data.kcaton_6 = 1.16e-3*5;     % (nM s)^(-1) [Shin et al. 2018 PCB]
-    data.kdon_6 = 46.45;          % nM [Shin et al. 2018 PCB]
-%     data.kcaton_6 = 1.16e-3;    % (nM s)^(-1) [Shin et al. 2018 PCB]
-%     data.kdon_6 = 46.45;        % nM [Shin et al. 2018 PCB]
-    %%% 
+    data.kon_5 = 0.03;          % s^(-1) [Iwamoto et al. 2016 PCB]
+    %  6: Negative regulation and concentration dependence
+    data.kcaton_6 = 1.16e-3*5;    % (nM s)^(-1) [Shin et al. 2018 PCB]
+    data.kdon_6 = 46.45;         % nM [Shin et al. 2018 PCB]
     data.vmaxoff_6 = 6.62e-5;    % s^(-1) [Shin et al. 2018 PCB]
     data.kmoff_6 = 52.72;        % nM [Shin et al. 2018 PCB]
     %
-    data.kon_7 = 0.04;       % Ref? 
-    data.koff_7 = 0.9356; 
+    data.kon_7 = 0.04;       % (nM s)^(-1) [Huang L Low BC 2011 PLoS One]
+    data.koff_7 = 0.9356;    % s^(-1) [Huang L Low BC 2011 PLoS One]
     data.kcaton_8 = 0.02; 
     data.kdon_8 = 23.39;
     data.kcatoff_8 = 0.1; 
     data.kdoff_8 = 23.39; 
+    %
+    ode_id = data.ode_id; 
+    switch ode_id
+        case 1
+            % do nothing
+        case 2 
+            data.kon_1 = 0.4509;            % (nM s)^(-1) [Iwamoto et al. 2016 PCB] -> EGF-EGFR
+            dimer_effect = 50;              % no unit, fitted
+            data.kcaton_3 = 0.018*dimer_effect;          % s^(-1) [Kim Y et al. Anderson KS 2012 Biochemistry]
+            data.kdon_3 = 6300/dimer_effect;             % nM [Kim Y et al. Anderson KS 2012 Biochemistry]
+            data.kon_4 = 0.02/100;            % s^(-1), fitted
+            data.kcaton_6 = 1.16e-3/10;         % (nM s)^(-1) [Shin et al. 2018 PCB]
+    end
     
     % Parameters below are needed if run with test_basal_level = 0
     data.fyn_act_0 = 0;
@@ -108,7 +121,6 @@ function data = init_data_original(data) % complex ode with single output
 end
 
 function ydot = rhs(t, y, data)
-
     gfgfr = y(1);
     dgfgfr = y(2);
     dgfgfrp = y(3);
@@ -170,6 +182,16 @@ function ydot = rhs(t, y, data)
     v9 = kon4 * fyn_act - koff4 * fyn_endo; 
     v10 = kon5 * fyn_endo; % fyn_endo deg
 
+    ode_id = data.ode_id;
+    if ode_id == 2 % 1 is the original form
+        kcaton3 = data.kcaton_3;
+        kdon3 = data.kdon_3; 
+        v3 = kcaton3*dgfgfr/(kdon3+dgfgfr) ...
+            - (kcatoff3*ptp_act)*dgfgfrp/(kdoff3+dgfgfrp);
+        v8 = kcaton8*(fyn_act)*sensor/(kdon8+sensor) ...
+            - kcatoff3*ptp_act*sensor_act/(kdoff3+sensor_act);
+    end
+    
     % dy/dt
     ydot = zeros(size(y));
     ydot(1)=v1-v2;      % gfgfr

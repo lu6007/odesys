@@ -81,6 +81,8 @@ batch_fyn_gf(data, 'rhs_function', model.rhs, 'y0', data.y0, ...
 'output_function', model.output);
 
 %% Run simulation of ode_model_1118
+close all; 
+
 name = 'ode_model_1118'; 
 % Single output
 ode_single_output = ode_model_1118(name, 'best_fit', 0); 
@@ -94,9 +96,24 @@ ode= ode_model_1118(name, 'multiple_output', 1, 'best_fit', 0, 'verbose', 1);
 fyn_gf_ode_solve(ode.data, 'test_basal_level', 0, 'show_figure', 1, ...
 'rhs_function', ode.rhs, 'y0', ode.data.y0, 'output_function', ode.output);
 title(fh.get_latex(['Model ', name, ' Multiple Output'])); 
+
 %
 ode = ode_single_output; 
 batch_fyn_gf(ode.data, 'multiple_output', 0, 'best_fit', 0, 'verbose', 1, ...
-    'rhs_function', ode.rhs, 'y0', ode.data.y0, ...
-'output_function', ode.output);
+    'rhs_function', ode.rhs, 'y0', ode.data.y0, 'output_function', ode.output);
 % axis([-5 35 -5 25]); 
+
+%% ode_id = 2
+ode_single_output = ode_model_1118(name, 'best_fit', 0, 'ode_id', 2); 
+ode = ode_single_output; 
+%
+batch_fyn_gf(ode.data, 'multiple_output', 0, 'best_fit', 0, 'verbose', 1, ...
+    'rhs_function', ode.rhs, 'y0', ode.data.y0, 'output_function', ode.output);
+
+% multiple output
+ode= ode_model_1118(name, 'multiple_output', 1, 'best_fit', 0, 'verbose', 1, ...
+    'ode_id', 2);
+fyn_gf_ode_solve(ode.data, 'test_basal_level', 0, 'show_figure', 1, ...
+'rhs_function', ode.rhs, 'y0', ode.data.y0, 'output_function', ode.output);
+title(fh.get_latex(['Model ', name, ' Multiple Output'])); 
+

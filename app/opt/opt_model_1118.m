@@ -13,8 +13,8 @@ function model = opt_model_1118(model_name, varargin)
     fh = optimize_ode_utility_fh; 
 
     % model_name = 'opt_model';
-    para_name = {'verbose', 'theta_bound_factor', 'model_id'};
-    default_value = {1, 10, 1};
+    para_name = {'verbose', 'theta_bound_factor', 'model_id', 'ode_mode'};
+    default_value = {1, 10, 1, ''};
     [verbose, theta_bound_factor, model_id] = ...
         parse_parameter(para_name, default_value, varargin);
     
@@ -30,7 +30,7 @@ function model = opt_model_1118(model_name, varargin)
     model.index = 3;             % [egf] = 50 ng/ml %[3; 5; 6] % 50, 10, 5
     
     % Optimization functions and parameters
-    model.objective = @objective;
+    model.objective = fh.objective;
     % model.constraint = fh.constraint;
     model.initial_guess = fh.initial_guess; 
     
@@ -107,8 +107,12 @@ function model = opt_model_1118(model_name, varargin)
         model.theta_name = {'kon_1'; 'koff_1'; 'kon_2'; 'koff_2'; 'kon_3'; 'kcatoff_3'; 'kdoff_3'};
         model.index = [2; 3; 5];
         if model_id <= 12
-        model.theta_fit = [2.57637294	2.855642128	0.022710822	35.12714557	0.003079185 ...
-            46.72058452	279.8101348]';
+            model.theta_fit = [2.57637294   2.855642128 0.022710822 35.12714557 0.003079185 ...
+               46.72058452  279.8101348]'; % error = 0.0464
+            
+%             % global optimization, error = 0.039
+%             model.theta_fit = [0.6602    0.1650    0.0127    7.7818    0.0488   13.2180 ...
+%               0.8429]';
         elseif model_id >= 13
             model.theta_fit = [0.535876586	0.489827576	0.003363463	72.03986762	0.039343271	...
                 19.66399713	89.77301467]'; 
@@ -157,18 +161,11 @@ function model = opt_model_1118(model_name, varargin)
         model.theta_fit = []';
     end
 
-
     %
     model.theta_bound = fh.get_theta_bound(model, model.theta_name, ...
         'bound_factor', theta_bound_factor);
 end % function model = opt_model_1118(model_name, varargin)
 
-function [f, t_exp_interp, y_exp_interp, y_ode_interp] = ...
-    objective(theta)
-    
-    [f, t_exp_interp, y_exp_interp, y_ode_interp] = objective_base(theta);
-    
-end
 
 
 

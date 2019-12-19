@@ -83,7 +83,7 @@ num_theta = size(theta_name, 1);
 theta = fh.get_theta(model, theta_name); 
 
 % Set up the optimization problem
-fprintf('function optimize_solver(): optimize parameters within in the [value*0.01 value*10] interval.\n');
+fprintf('function optimize_solver(): optimize parameters within the [value*0.01 value*10] interval.\n');
 theta_lower_bound = model.theta_bound(:, 1);
 theta_upper_bound = model.theta_bound(:, 2); 
 

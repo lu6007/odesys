@@ -35,7 +35,7 @@ function model_obj = fyn_gf_model(model_name, varargin)
     end
     
     % Optimization functions and parameters
-    model_obj.objective = @objective;
+    model_obj.objective = fh.objective;
     model_obj.constraint = fh.constraint;
     model_obj.initial_guess = fh.initial_guess; 
     model_obj.index = 3; % [egf] = 50 ng/ml %[3; 5; 6] % 50, 10, 5
@@ -48,12 +48,6 @@ function model_obj = fyn_gf_model(model_name, varargin)
 
 end % function model_obj = fyn_gf_model(model_name)
 
-function [f, t_exp_interp, y_exp_interp, y_ode_interp] = ...
-    objective(theta)
-    
-    model_fh = @fyn_gf_model;
-    [f, t_exp_interp, y_exp_interp, y_ode_interp] = objective_base(theta, model_fh);
-end
 
 
 
