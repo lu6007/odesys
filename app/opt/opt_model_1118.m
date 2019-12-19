@@ -13,8 +13,8 @@ function model = opt_model_1118(model_name, varargin)
     fh = optimize_ode_utility_fh; 
 
     % model_name = 'opt_model';
-    para_name = {'verbose', 'theta_bound_factor', 'model_id', 'ode_mode'};
-    default_value = {1, 10, 1, ''};
+    para_name = {'verbose', 'theta_bound_factor', 'model_id'};
+    default_value = {1, 10, 1};
     [verbose, theta_bound_factor, model_id] = ...
         parse_parameter(para_name, default_value, varargin);
     

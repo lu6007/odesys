@@ -45,35 +45,10 @@ batch_fyn_gf(model.data, 'rhs_function', model.rhs, 'y0', model.data.y0, ...
 
 %% Optmize the complex model with no degradation and endocytosis of Fyn kinase
 num_guess = 0;
-model_name = 'complex_ode_nodeg_endo1'; % fyn_endo
-[sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name); 
-title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
-
-%% Optmize the complex model with no degradation and endocytosis of Fyn kinase
-num_guess = 0;
-model_name = 'complex_ode_nodeg_endo2'; % fyn_endo
-[sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name); 
-title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
-
-%% Optmize the complex model with no degradation and endocytosis of Fyn kinase
-% fit concentration dependence
-num_guess = 0;
-model_name = 'complex_ode_nodeg_endo3'; % fyn_endo
-[sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name); 
-title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
-
-%% Optmize the complex model with no degradation and endocytosis of Fyn kinase
-num_guess = 0;
-endo_str = '11';
-model_name = ['complex_ode_nodeg_endo', endo_str]; % fyn_endo
-[sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name); 
-title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
-
-%% Optmize the complex model with no degradation and endocytosis of Fyn kinase
-num_guess = 0;
-endo_str = '12';
-model_name = ['complex_ode_nodeg_endo', endo_str]; % fyn_endo
-[sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name); 
+fyn_endo = 11; % 1, 2, 3, 11, 12
+%endo_str = num2str(fyn_endo); % '1', '2', '3', '11', 12'
+% model_name = ['complex_ode_nodeg_endo', endo_str]; % fyn_endo
+[sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', 'complex_ode_nodeg_endo', 'fyn_endo', fyn_endo); 
 title('Complex ODE with no Degradation and Active Fyn Endocytosis'); 
 
 %% Copy the results to temp

@@ -11,11 +11,11 @@ global optimize_ode_utility_fh optimize_ode_model;
 optimize_ode_utility_fh = opt_utility();
 fh = optimize_ode_utility_fh; 
 
-para_name = {'num_guess', 'model_name', 'model_id', 'global_optimize'};
-default_value = {1, 'simple_ode', 4, 0}; 
+para_name = {'num_guess', 'model_name', 'model_id', 'global_optimize', 'fyn_endo'};
+default_value = {1, 'simple_ode', 4, 0, 0}; 
 % num_guess = 0 - use initial guess in data. 
 % num_guesss = N > 0 - generate N latin hypercube sample
-[num_guess, model_name, model_id, global_optimize] = ...
+[num_guess, model_name, model_id, global_optimize, fyn_endo] = ...
     parse_parameter(para_name, default_value, varargin);
 
 verbose = 1;
@@ -35,39 +35,27 @@ switch model_name
         model = fyn_gf_model_nodeg(model_name, 'best_fit', 1, 'verbose', verbose);
         xy_axis = [-200 2000 0 200];
         
-    case 'complex_ode_nodeg_endo1'
-        set = 1; 
+    case 'complex_ode_nodeg_endo'
         xy_axis = [-200 2000 0 250];
+        switch fyn_endo
+            case {1, 2, 3}
+                set = fyn_endo;
+            case 11
+                set = 1;
+            case 12
+                set = 11;
+        end
         model = fyn_gf_model_nodeg(model_name, 'best_fit', set, ...
-            'verbose', verbose, 'fyn_endo', set);
-    case 'complex_ode_nodeg_endo2'
-        set = 2; 
-        xy_axis = [-200 2000 0 200];
-        model = fyn_gf_model_nodeg(model_name, 'best_fit', set, ...
-            'verbose', verbose, 'fyn_endo', set);
-    case 'complex_ode_nodeg_endo3'
-        set = 3; 
-        xy_axis = [-200 2000 0 200];
-        model = fyn_gf_model_nodeg(model_name, 'best_fit', set, ...
-            'verbose', verbose, 'fyn_endo', set);
-    
-    case 'complex_ode_nodeg_endo11'
-        best_fit = 1;
-        fyn_endo = 11;
-        xy_axis = [-200 2000 0 200];
-        model = fyn_gf_model_nodeg(model_name, 'best_fit', best_fit, ...
-            'verbose', verbose, 'fyn_endo', fyn_endo);
-
-    case 'complex_ode_nodeg_endo12'
-        best_fit = 11;
-        fyn_endo = 12;
-        xy_axis = [-200 2000 0 200];
-        model = fyn_gf_model_nodeg(model_name, 'best_fit', best_fit, ...
             'verbose', verbose, 'fyn_endo', fyn_endo);
         
     case 'model_1118'
         xy_axis = [-200 2000 0 30];
         model = opt_model_1118(model_name, 'model_id', model_id);
+        
+    case 'model_1219'
+        xy_axis = [-200 2000 0 30];
+        model = opt_model_1118(model_name, 'model_id', model_id);
+        
 end
 disp(model); 
 disp(model.ode.data);
