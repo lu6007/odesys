@@ -115,28 +115,9 @@ for i = 1:length(field_name)
     'probe_factor', field_value{i});
 end
 
-%% Run the best fit model_1118, ode_id = 2, with different parameter values in batch
-model_id = 12; % Initialize to the best fit parameters for model 9
-model = opt_model_1118('model_1118', 'model_id', model_id);
-% The control group
-model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
-ode = model.ode; 
-batch_fyn_gf(ode.data, 'rhs_function', ode.rhs, 'y0', ode.data.y0, ...
-'output_function', ode.output);
-
-% The probed group
-field_name = {'kon_2', 'koff_2', 'kon_4', 'koff_4', 'kon_7', 'koff_7'};
-field_value = {1e+3, 1e-3, 1e-6, 1e6, 1e1, 1e-1}; 
-% field_name = {'kon_1', 'koff_1', 'kon_3', 'kcatoff_3', 'kdoff_3'};
-% field_value = {1e1, 1e-1, 1e1, 1e-2, 1e-2}; 
-% field_name = {'kon_5', 'vmaxoff_6', 'kmoff_6'};
-% field_value = {1e1, 1e-2, 0.5}; 
-% field_name = {'koff_2', 'koff_2', 'gfr_total'};
-% field_value = {1e+2, 1e+4, 1e3}; 
-for i = 1:length(field_name)
-    model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
-    ode = model.ode; 
-    batch_fyn_gf(ode.data, 'rhs_function', ode.rhs, 'y0', ode.data.y0, ...
-    'output_function', ode.output, 'probe_field', field_name{i}, ...
-    'probe_factor', field_value{i});
-end
+%% Optmize ode_model_1219 for concentration dependence
+num_guess = 20;
+model_name = 'model_1219'; 
+model_id = 1; 
+[sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name, ...
+    'model_id', model_id, 'global_optimization', 0); 

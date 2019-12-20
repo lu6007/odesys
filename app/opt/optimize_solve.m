@@ -54,7 +54,7 @@ switch model_name
         
     case 'model_1219'
         xy_axis = [-200 2000 0 30];
-        model = opt_model_1118(model_name, 'model_id', model_id);
+        model = opt_model_1219(model_name, 'model_id', model_id);
         
 end
 disp(model); 
