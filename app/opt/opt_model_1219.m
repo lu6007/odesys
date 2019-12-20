@@ -41,7 +41,9 @@ function model = opt_model_1219(model_name, varargin)
             'kon_4'; 'koff_4'; 'kon_7'; 'koff_7'};
         model.theta_fit = [0.177946631	3.479475449	0.131169418	125.99938	...
             21.48235746	38.01936756	0.001999939	0.000200841	0.2609356	3.626668782]; 
-    elseif model_id >= 2
+    end
+    
+    if model_id >= 2
         model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
         % same theta_name as model_id = 1
     end

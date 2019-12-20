@@ -120,4 +120,4 @@ num_guess = 20;
 model_name = 'model_1219'; 
 model_id = 2; % 1
 [sol0, sol] = optimize_solve('num_guess',num_guess, 'model_name', model_name, ...
-    'model_id', model_id, 'global_optimization', 0); 
+    'model_id', model_id, 'global_optimize', 0); 

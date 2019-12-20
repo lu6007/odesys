@@ -96,7 +96,7 @@ if global_optimize
     sol.fming = fming;
     sol.outptm = outptm;
     sol.manyminsm = manyminsm; 
-else % if global_optimize
+else % if ~global_optimize
     % Local optimization
     theta_var = optimvar('theta', num_theta, 'LowerBound', theta_lower_bound', ...
         'UpperBound', theta_upper_bound'); 
