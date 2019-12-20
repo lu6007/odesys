@@ -45,9 +45,55 @@ function model = opt_model_1219(model_name, varargin)
     
     if model_id >= 2
         model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_fit = [1.744816973	0.118021428	0.161653954	457.365617	...
+            95.20155751	380.0109548	0.01316032 6.21E-06 1.771366636	34.81210749]; 
         % same theta_name as model_id = 1
     end
 
+    if model_id >= 3
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_2'; 'koff_2'; 'kcaton_6'; 'kdon_6'; 'vmaxoff_6'; ...
+            'kmoff_6'; 'kon_4'; 'koff_4'; 'kon_5'};
+        model.theta_fit = [0.008614418	10.75312475	0.000146671	12.88583716	...
+            6.62E-04	0.527207213	0.007604692	6.21E-05	0.000300694];
+    end
+    
+    if model_id >= 4
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_2'; 'koff_2'; 'kon_4'; 'koff_4'; 'kon_7'; 'koff_7'};
+        model.theta_fit = [0.077876944	76.8010489	0.010285771	0.000620918	...
+            7.780614418	152.2408491];
+    end
+    
+    if model_id >=5 
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_1'; 'koff_1'; 'kcaton_3'; 'kdon_3'; 'kcatoff_3'; 'kdoff_3';
+            'kon_4'; 'koff_4'; 'kon_7'; 'koff_7'};
+        model.theta_fit = [12.45740524	0.908054327	0.156973969	1098.618859 ...
+            951.2502672	1217.450961	0.017120522	0.002715464	77.74608507	492.8449488]; 
+    end
+    
+    if model_id >=6 
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_2'; 'koff_2'; 'kcaton_6'; 'kdon_6'; 'vmaxoff_6'; ...
+            'kmoff_6'; 'kon_4'; 'koff_4'; 'kon_5'};
+        model.theta_fit = [0.718142337	354.0134501	0.000310683	93.87921434	...
+            0.000108461	0.008211286	0.021486414	0.001182615	5.12E-06]; 
+    end
+
+    if model_id >=7 
+        model = fh.set_model_theta(model, model.theta_name, model.theta_fit);
+        model.theta_name = {'kon_2'; 'koff_2'; 'kon_4'; 'koff_4'; 'kon_7'; 'koff_7'};
+        % model.theta_fit = []; 
+    end
+
+    if model_id >= 11 % concentration dependence
+        model.theta_name = {'kon_1'; 'koff_1'; 'kcaton_3'; 'kdon_3'; 'kcatoff_3'; 'kdoff_3';
+            'kon_4'; 'koff_4'; 'kon_7'; 'koff_7'};
+        % model.theta_fit = []; 
+        model.index = [2; 3; 5];
+    end
+    
     model.theta_bound = fh.get_theta_bound(model, model.theta_name, ...
         'bound_factor', theta_bound_factor);
 end % function model = opt_model_1219(model_name, varargin)

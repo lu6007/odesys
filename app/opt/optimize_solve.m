@@ -11,11 +11,12 @@ global optimize_ode_utility_fh optimize_ode_model;
 optimize_ode_utility_fh = opt_utility();
 fh = optimize_ode_utility_fh; 
 
-para_name = {'num_guess', 'model_name', 'model_id', 'global_optimize', 'fyn_endo'};
-default_value = {1, 'simple_ode', 4, 0, 0}; 
+para_name = {'num_guess', 'model_name', 'model_id', 'global_optimize', 'fyn_endo', ...
+    'parallel_process'};
+default_value = {1, 'simple_ode', 4, 0, 0, 0}; 
 % num_guess = 0 - use initial guess in data. 
 % num_guesss = N > 0 - generate N latin hypercube sample
-[num_guess, model_name, model_id, global_optimize, fyn_endo] = ...
+[num_guess, model_name, model_id, global_optimize, fyn_endo, parallel_process] = ...
     parse_parameter(para_name, default_value, varargin);
 
 verbose = 1;
@@ -83,13 +84,18 @@ option = optimoptions('fmincon', 'Display', 'off', 'Algorithm', 'interior-point'
 % display(option);
 time_start = tic; 
 
+% Parallel processing
+if parallel_process
+    par_pool = parpool('local', parallel_process); 
+end
+
 if global_optimize
     % global optimization
     problem = createOptimProblem('fmincon', 'objective', objective_fun, ...
         'x0', theta, 'options', option, ...
         'lb', theta_lower_bound, 'ub', theta_upper_bound); 
     go_option = GlobalSearch; % 3 trials
-    % go_option = MultiStart; % 50 trials
+    % go_optoin = MultiStart('UseParallel', true); % 50 trial
     [xming, fming, ~, outptm, manyminsm] = run(go_option, problem);
     sol0 = [];
     sol.xming = xming;
@@ -107,8 +113,6 @@ else % if ~global_optimize
     fprintf('\n num_guess = %d\n', num_guess); 
     if num_guess == 0
         use_latin_hypercube_sample = false; 
-        % theta = [0.040558595	5.720696138	0.001076275	0.195210427	1.738250076	...
-        %           0.697117467	340.8719999	548.4923813]';
         num_guess = 1;
         fprintf('\t set num_guess = 1\n');
     else
@@ -120,7 +124,7 @@ else % if ~global_optimize
     fprintf('\t Turned warnings off\n'); 
     sol0 = cell(num_guess, 1);
     sol = cell(num_guess, 1); 
-    for i = 1:num_guess
+    for i = 1:num_guess % parfor i = 1:num_guess
         if use_latin_hypercube_sample
             theta = constraint_initial_guess_fun(X(i, :)', model.theta_bound);
         end
@@ -159,6 +163,11 @@ else % if ~global_optimize
 end % if global_optimize
 time_used = toc(time_start); 
 fprintf('time_used = %f (sec) \n', time_used);
+
+if parallel_process
+% par_pool = gcp('nocreate'); 
+    delete(par_pool); 
+end % if parallel_process
 
 end % function
 
